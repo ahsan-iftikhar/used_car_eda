@@ -36,6 +36,7 @@ ggplot(data = brnd_n_milag %>%
     subtitle = "You have much greater options to choose from Suzuki",
     caption = "OLX Data Sourced from Kaggle \n "
   ) +
+  theme_minimal() +
   theme(
     legend.position = "none",
     plot.caption = element_text(size = 7),
@@ -54,3 +55,30 @@ ggplot(olx_car_data,
   scale_y_log10() +
   theme_minimal()
 
+
+unique(olx_car_data$Brand)
+
+# Feature engineering
+# Creating a new variable to determine the country of origin/manufacturing
+
+european <- c("Range Rover", "Land Rover", "Porsche", "Audi",
+              "BMW", "Mercedes")
+japanese <- c("Toyota", "Honda", "Mitsubishi", "Lexus", "Subaru", "Suzuki",
+              "Daihatsu", "Daihatsu",  "Nissan" , "Mazda")
+korean = c("Hyundai" , "KIA", "Daewoo")
+chinese = c("FAW", "Changan")
+
+
+olx_car_data <- olx_car_data %>% 
+  mutate(origin_country = case_when(
+    Brand %in% european ~ "europe",
+    Brand %in% japanese ~ "japan",
+    Brand %in% korean ~ "korea",
+    Brand %in% chinese ~ "china",
+    TRUE ~ as.character(Brand))
+  )
+
+glimpse(olx_car_data)
+
+
+glimpse(olx_car_data)
