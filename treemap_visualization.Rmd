@@ -1,12 +1,27 @@
-# Objective
-# Using the data, achieve the following objectives in Pakistan.
+---
+title: "Exploratory Data Analysis"
+author: "Ahsan Iftikhar"
+date: "`r Sys.Date()`"
+output: html_document
+---
 
-# 1) Identify the most popular cars in Pakistan.
-# 2) Identify the cars most commonly sold in Pakistan across different brands
-# 3) Which is better in terms of it's resale value.
-# 4) Predict the cars for the cases, which has missing data for the cars.
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE)
+```
 
-# Loading packages
+## Objective
+
+Using the data, achieve the following objectives in Pakistan.
+
+1)  Identify the most popular cars in Pakistan.
+2)  Identify the cars most commonly sold in Pakistan across different brands
+3)  Which is better in terms of it's resale value.
+4)  Predict the cars for the cases, which has missing data for the cars.
+
+Loading the required packages
+
+```{r loading_packages, warning=FALSE}
+
 library(tidyverse)
 library(treemapify)
 library(paletteer)
@@ -18,19 +33,21 @@ font_add_google(name = "Lora", family = "title_font")
 font_add_google(name = "Roboto", family = "body_font")
 showtext_auto()
 
+```
 
-# Loading data
+## Loading data
+
+```{r loading_data, warning=FALSE, message=FALSE}
 olx_car_data <- read_csv("data/OLX_Car_Data_CSV.csv")
+
+```
 
 # Data Book
 
-# Sample data contains vehicles registered in the year
-range(olx_car_data$Year, na.rm = TRUE)[1]
-range(olx_car_data$Year, na.rm = TRUE)[2]
+Sample data contains vehicles registered for the year `r range(olx_car_data$Year, na.rm = TRUE)[1]` to `r range(olx_car_data$Year, na.rm = TRUE)[2]`. The sample comprises of `r dim(olx_car_data)[1]` rows and `r dim(olx_car_data)[2]` variables.
 
-glimpse(olx_car_data)
-
-data_book <- data_frame(
+```{r data_dict, include=TRUE, echo=FALSE}
+data_book <- tibble(
   var_name = c("Brand", 
                "Condition",
                "Fuel",
@@ -75,20 +92,21 @@ data_book_gt <- data_book %>%
 
 data_book_gt
 
+```
 
-# Listing all the different types, so it can be grouped by country/region of 
-# origin. Country of manufacturing, have different price points and 
-# consequently market is segmented based on it. In addition, different
-# brand manufacturers cater to high end customers based on the prestige,
-# and brand value. Thus to make meaningful comparison it is important
-# to add variables and thus compare like groups
+## Feature engineering
 
+Listing all the different types, so it can be grouped by country/region of origin. Country of manufacturing, have different price points and consequently market is segmented based on it. In addition, different brand manufacturers cater to high end customers based on the prestige, \# and brand value. Thus to make meaningful comparison it is important to add variables and thus compare like groups.
+
+```{r vector_all_brands}
 
 unique(olx_car_data$Brand)
 
+```
 
-# Feature engineering
-# Creating a new variable to determine the country of origin/manufacturing
+Creating a new variable to determine the country of origin/manufacturing of the difference vehicles contains in the same dataset.
+
+```{r}
 
 european <- c("Range Rover", "Land Rover", "Porsche", "Audi",
               "BMW", "Mercedes")
@@ -120,6 +138,7 @@ olx_car_data_by_org <- olx_car_data %>%
   arrange(desc(n)) %>% 
   ungroup()
 
+
 olx_car_data_by_org_gt <- olx_car_data_by_org %>% 
   gt() %>% 
   gt::tab_header(
@@ -138,6 +157,12 @@ olx_car_data_by_org_gt <- olx_car_data_by_org %>%
 
 olx_car_data_by_org_gt
 
+```
+
+
+
+```{r}
+
 brnd_by_origin <- olx_car_data %>% 
   group_by(origin_country, `Brand`) %>% 
   count() %>% 
@@ -145,11 +170,8 @@ brnd_by_origin <- olx_car_data %>%
   drop_na() %>% 
   ungroup()
 
-glimpse(brnd_by_origin)
-
-
 ggplot(data = filter(brnd_by_origin, origin_country == "Japan"), 
-       mapping = aes(area = n, label = Brand, fill = Brand)
+       mapping = aes(area = n, label = Brand, fill = Brand, value = n)
 ) +
   geom_treemap() +
   geom_treemap_text(colour = "white", reflow = TRUE) +
@@ -169,3 +191,4 @@ ggplot(data = filter(brnd_by_origin, origin_country == "Japan"),
     plot.margin = margin(3, 3, 3, 3, "mm")
   ) 
 
+```
