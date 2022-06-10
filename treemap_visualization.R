@@ -1,3 +1,11 @@
+# Objective
+# Using the data, achieve the following objectives in Pakistan.
+
+# 1) Identify the most popular cars in Pakistan.
+# 2) Identify the cars most commonly sold in Pakistan across different brands
+# 3) Which is better in terms of it's resale value.
+# 4) Predict the cars for the cases, which has missing data for the cars.
+
 # Loading packages
 library(tidyverse)
 library(treemapify)
